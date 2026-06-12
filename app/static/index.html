@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Time Series Agent</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <aside class="sidebar">
+        <section class="panel">
+          <div class="panel-title">Connection</div>
+          <label>
+            API key
+            <input id="apiKey" type="password" value="dev-api-key" autocomplete="off" />
+          </label>
+          <div class="row">
+            <button id="newChatBtn" type="button">New Chat</button>
+            <button id="loadModelsBtn" type="button">Models</button>
+          </div>
+          <label>
+            Thread ID
+            <input id="threadId" type="text" placeholder="Create or paste a thread id" />
+          </label>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">Dataset</div>
+          <label>
+            Upload CSV
+            <input id="datasetFile" type="file" accept=".csv,text/csv" />
+          </label>
+          <button id="uploadBtn" type="button">Upload Dataset</button>
+          <label>
+            Dataset ID
+            <input id="datasetId" type="text" placeholder="Optional" />
+          </label>
+        </section>
+
+        <section class="panel">
+          <div class="panel-title">Model Range</div>
+          <label>
+            Model
+            <select id="modelName">
+              <option value="">No model</option>
+            </select>
+          </label>
+          <label>
+            Start
+            <input id="forecastStart" type="text" placeholder="2026-06-01 00:00:00" />
+          </label>
+          <label>
+            End
+            <input id="forecastEnd" type="text" placeholder="2026-06-02 00:00:00" />
+          </label>
+          <label>
+            Sample rate seconds
+            <input id="sampleRate" type="number" min="60" step="60" value="3600" />
+          </label>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <h1>Time Series Agent</h1>
+            <p id="statusText">Ready</p>
+          </div>
+          <a href="/docs" target="_blank" rel="noreferrer">API Docs</a>
+        </header>
+
+        <section id="chatLog" class="chat-log" aria-live="polite"></section>
+
+        <form id="messageForm" class="composer">
+          <textarea
+            id="messageInput"
+            rows="3"
+            placeholder="Ask about data quality, outliers, forecast reliability, or model performance..."
+          ></textarea>
+          <button type="submit">Send</button>
+        </form>
+      </section>
+
+      <aside class="inspector">
+        <section class="panel inspector-panel intent-panel">
+          <div class="panel-title">Latest Intent</div>
+          <pre id="intentBox">None yet</pre>
+        </section>
+        <section class="panel inspector-panel eval-panel">
+          <div class="panel-title">Evaluation</div>
+          <button id="evaluateBtn" type="button" disabled>Evaluate Latest</button>
+          <button id="openEvaluationBtn" type="button" disabled>Open Report</button>
+          <div id="evaluationBox" class="evaluation-summary">No evaluation yet</div>
+        </section>
+        <section class="panel inspector-panel">
+          <div class="panel-title">Tools</div>
+          <pre id="toolsBox">No tool calls yet</pre>
+        </section>
+        <section class="panel inspector-panel">
+          <div class="panel-title">Agent Trace</div>
+          <pre id="traceBox">No trace yet</pre>
+        </section>
+      </aside>
+    </main>
+    <div id="evaluationModal" class="modal-backdrop" hidden>
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="evaluationModalTitle">
+        <header class="modal-header">
+          <div>
+            <h2 id="evaluationModalTitle">Evaluation Report</h2>
+            <p id="evaluationModalSubtitle">No report loaded</p>
+          </div>
+          <button id="closeEvaluationBtn" class="secondary-button" type="button">Close</button>
+        </header>
+        <div id="evaluationReport" class="evaluation-report"></div>
+      </section>
+    </div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

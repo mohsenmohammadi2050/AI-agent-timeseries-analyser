@@ -1,0 +1,44 @@
+[
+  {
+    "name": "conceptual_outlier",
+    "request": {
+      "message": "What is a time series outlier?",
+      "dataset_id": null
+    },
+    "expected_intent": "general_question",
+    "expected_tools": []
+  },
+  {
+    "name": "data_quality",
+    "request": {
+      "message": "Check this dataset for missing values, gaps, and duplicates.",
+      "dataset_id": "example"
+    },
+    "expected_intent": "data_quality",
+    "expected_tools": ["data_consistency", "data_anomaly_warnings"]
+  },
+  {
+    "name": "prediction_analysis",
+    "request": {
+      "message": "Generate a forecast and explain if the prediction looks risky.",
+      "dataset_id": "example",
+      "model_name": "linear_regression_simple",
+      "forecast_start": "2026-06-01 00:00:00",
+      "forecast_end": "2026-06-02 00:00:00"
+    },
+    "expected_intent": "prediction_analysis",
+    "expected_tools": ["data_consistency", "data_anomaly_warnings", "historical_summary", "hourly_consumption_context", "prediction_backtest_context", "prediction", "prediction_analysis", "prediction_interval"]
+  },
+  {
+    "name": "model_performance_analysis",
+    "request": {
+      "message": "How accurate was the ML model on this historical range?",
+      "dataset_id": "example",
+      "model_name": "linear_regression_simple",
+      "forecast_start": "2026-05-01 00:00:00",
+      "forecast_end": "2026-05-02 00:00:00"
+    },
+    "expected_intent": "model_performance_analysis",
+    "expected_tools": ["data_consistency", "data_anomaly_warnings", "historical_summary", "hourly_consumption_context", "model_performance_analysis"]
+  }
+]
