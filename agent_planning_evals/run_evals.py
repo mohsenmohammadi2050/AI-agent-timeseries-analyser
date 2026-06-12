@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -11,6 +12,12 @@ from langchain.agents import create_agent
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+
+os.environ.setdefault("DEFAULT_LLM_PURPOSE", "agent")
+os.environ.setdefault(
+    "LLM_PROVIDERS_JSON",
+    '{"agent":{"provider":"mock","model":"mock-simple-explainer"}}',
+)
 
 from app.agents.prompts import MANAGER_SYSTEM_PROMPT, REACT_TOOL_CATALOG
 from app.llm.langchain_adapter import get_provider_chat_model

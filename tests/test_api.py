@@ -14,7 +14,11 @@ def _client(tmp_path, monkeypatch) -> TestClient:
     monkeypatch.setenv("API_KEYS", "test-key")
     monkeypatch.setenv("DATABASE_PATH", str(tmp_path / "test.sqlite3"))
     monkeypatch.setenv("UPLOAD_DIR", str(tmp_path / "uploads"))
-    monkeypatch.delenv("LLM_PROVIDERS_JSON", raising=False)
+    monkeypatch.setenv(
+        "LLM_PROVIDERS_JSON",
+        '{"agent":{"provider":"mock","model":"mock-simple-explainer"}}',
+    )
+    monkeypatch.setenv("DEFAULT_LLM_PURPOSE", "agent")
     get_settings.cache_clear()
     return TestClient(create_app())
 

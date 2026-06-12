@@ -142,7 +142,7 @@ Create a local `.env` file from the example:
 Copy-Item .env.example .env
 ```
 
-The app works without a real LLM key because the default provider can be the mock provider. To use a real LLM, configure `.env` as described below.
+The app automatically loads `.env` from the project root when it starts. It works without a real LLM key because the default provider can be the mock provider. To use a real LLM, configure `.env` as described below.
 
 ## Environment Variables
 
@@ -361,6 +361,8 @@ Run:
 ```
 
 These are different from the UI evaluator. Planning evals test tool selection. The UI evaluator scores one real prediction-analysis answer.
+
+Planning evals use the mock LLM provider by default so the expected tool-selection checks are deterministic.
 
 ## Example Questions To Ask
 
