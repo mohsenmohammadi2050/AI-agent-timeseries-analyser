@@ -4,7 +4,7 @@ import json
 from typing import Any, TypedDict
 
 import pandas as pd
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.tools import StructuredTool
 from langchain.agents import create_agent
 
@@ -361,11 +361,11 @@ def _run_react_agent(state: AgentState) -> dict[str, Any]:
     answer = ""
     for message in reversed(messages):
         content = getattr(message, "content", "")
-        if content:
+        if isinstance(message, AIMessage) and content:
             answer = str(content)
             break
     if not answer:
-        answer = "The agent finished, but did not produce a final text answer."
+        answer = "I could not produce a final answer. Please try again with a shorter question."
 
     _append_trace(
         trace,

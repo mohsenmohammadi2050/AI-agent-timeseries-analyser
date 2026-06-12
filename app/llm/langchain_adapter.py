@@ -100,6 +100,14 @@ class ProviderChatModel(BaseChatModel):
             if name in available and name not in seen:
                 calls.append({"name": name, "args": {}, "id": f"mock-{len(calls) + 1}"})
                 seen.add(name)
+        if not calls:
+            return AIMessage(
+                content=(
+                    "A time series is data collected in time order, like hourly energy use, "
+                    "daily sales, or monthly temperature. It helps you see patterns, trends, "
+                    "and unusual changes over time."
+                )
+            )
         return AIMessage(content="", tool_calls=calls)
 
     def _openai_compatible_generate(self, messages: list[BaseMessage]) -> AIMessage:

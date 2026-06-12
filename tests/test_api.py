@@ -92,6 +92,10 @@ def test_general_question_does_not_run_dataset_tools(tmp_path, monkeypatch) -> N
     body = response.json()
     assert body["intent"] == "general_question"
     assert body["tools"] == []
+    assert "time series" in body["answer"].lower()
+    assert "request json" not in body["answer"].lower()
+    assert "available tools" not in body["answer"].lower()
+    assert "use react style" not in body["answer"].lower()
     assert any(
         step["actor"] == "manager" and step["step"] == "final_response"
         for step in body["agent_trace"]
