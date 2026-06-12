@@ -336,6 +336,41 @@ def _infer_intent_from_tools(tools: list[dict[str, Any]]) -> str:
     return "general_question"
 
 
+def _fallback_answer_from_tools(tools: list[dict[str, Any]]) -> str:
+    if not tools:
+        return "I could not produce a final answer. Please try again with a shorter question."
+
+    lines = ["Here is the analysis in simple terms:"]
+    for tool in tools:
+        summary = str(tool.get("summary") or "").strip()
+        if summary:
+            lines.append(f"- {summary}")
+
+    prediction_analysis = _tool_data(tools, "prediction_analysis") or {}
+    reliability_rows = prediction_analysis.get("per_hour_reliability") or []
+    low_count = int(prediction_analysis.get("low_reliability_count") or 0)
+    medium_count = int(prediction_analysis.get("medium_reliability_count") or 0)
+    if reliability_rows:
+        lines.append(
+            f"- Reliability check: {low_count} predicted hours look low reliability "
+            f"and {medium_count} look medium reliability."
+        )
+        risky = [
+            row for row in reliability_rows
+            if row.get("reliability") in {"low", "medium"}
+        ][:3]
+        for row in risky:
+            reason = ", ".join(row.get("reasons") or []) or "risk was detected by the reliability tool"
+            lines.append(
+                f"- Watch {row.get('timestamp')}: reliability is {row.get('reliability')} because {reason}."
+            )
+
+    lines.append(
+        "The LLM did not return a separate final narrative, so this answer was built from the tool results."
+    )
+    return "\n".join(lines)
+
+
 def _run_react_agent(state: AgentState) -> dict[str, Any]:
     request = state["request"]
     history = state.get("history", [])
@@ -365,7 +400,7 @@ def _run_react_agent(state: AgentState) -> dict[str, Any]:
             answer = str(content)
             break
     if not answer:
-        answer = "I could not produce a final answer. Please try again with a shorter question."
+        answer = _fallback_answer_from_tools(tools)
 
     _append_trace(
         trace,
