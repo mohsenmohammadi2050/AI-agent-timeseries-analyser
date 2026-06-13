@@ -164,9 +164,15 @@ def _request_context(request: dict[str, Any], history: list[dict[str, Any]]) -> 
         "- For a conceptual/general question, answer without tools.\n"
         "- For a dataset question, inspect the data before answering.\n"
         "- If forecast_start is provided, context tools must use only data before that timestamp.\n"
-        "- For a future forecast, use prediction_backtest_context before prediction_analysis when possible.\n"
-        "- For historical model performance, use model_performance_analysis instead of generating a new forecast analysis.\n"
-        "- Keep the final answer short, precise, and manager-friendly."
+        "- If the user asks for ML model performance, accuracy, error, MAE, MAPE, or comparison with actual values on a range, "
+        "use model_performance_analysis. Do not use the forecast-analysis path for that request.\n"
+        "- If the user asks for a new forecast, prediction reliability, forecast risk, or analysis of forecasted values, "
+        "use the forecast-analysis path even if actual values exist later in the dataset.\n"
+        "- For forecast analysis, first use hourly_consumption_context to get last-30-days hourly consumption statistics.\n"
+        "- Then use prediction_backtest_context to get previous-day prediction performance and hourly errors.\n"
+        "- Then generate the new forecast with prediction.\n"
+        "- Then use prediction_analysis to analyze reliability using the hourly context, previous-day backtest, and forecast values.\n"
+        "- Keep the final answer rich but short, precise, and manager-friendly."
     )
 
 

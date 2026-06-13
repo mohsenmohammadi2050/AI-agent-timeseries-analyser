@@ -10,17 +10,6 @@ MANAGER_SYSTEM_PROMPT = (
 )
 
 
-REACT_PLANNER_SYSTEM_PROMPT = (
-    "REACT_TOOL_PLANNER\n"
-    "You are the manager agent for a time series analysis system. "
-    "Decide which tools are needed before answering. "
-    "Use ReAct style: think about the request, choose tool actions, then stop. "
-    "Return only valid JSON with this shape: "
-    '{"thought":"short reasoning","intent":"short intent label","actions":[{"tool":"tool_name","reason":"why this tool is needed"}]}. '
-    "Do not invent tool names. If no tool is needed, return an empty actions list."
-)
-
-
 REACT_TOOL_CATALOG: list[dict[str, str]] = [
     {
         "tool": "data_consistency",
@@ -40,11 +29,11 @@ REACT_TOOL_CATALOG: list[dict[str, str]] = [
     },
     {
         "tool": "hourly_consumption_context",
-        "description": "Summarize consumption by hour using recent historical data. Needs dataset_id.",
+        "description": "Summarize each hour's power consumption using the last 30 historical days before the requested forecast. Use first for forecast analysis. Needs dataset_id.",
     },
     {
         "tool": "prediction_backtest_context",
-        "description": "Evaluate model performance on the previous day before a new forecast. Needs dataset_id, model_name, forecast_start.",
+        "description": "Evaluate the model on the previous day before a new forecast and return performance by hour. Use after hourly_consumption_context for forecast analysis. Needs dataset_id, model_name, forecast_start.",
     },
     {
         "tool": "prediction",
@@ -52,11 +41,11 @@ REACT_TOOL_CATALOG: list[dict[str, str]] = [
     },
     {
         "tool": "prediction_analysis",
-        "description": "Analyze generated predictions and per-hour reliability. Use after prediction.",
+        "description": "Analyze new forecast reliability using hourly consumption context, previous-day backtest performance, and generated predictions. Use after prediction.",
     },
     {
         "tool": "model_performance_analysis",
-        "description": "Evaluate ML model performance on a historical range where actual values exist. Needs dataset_id, model_name, forecast_start, forecast_end.",
+        "description": "Evaluate ML model performance on a historical range by comparing predictions with actual values. Use when the user asks about performance, accuracy, error, MAE, MAPE, or actual-value comparison. Needs dataset_id, model_name, forecast_start, forecast_end.",
     },
     {
         "tool": "prediction_interval",
@@ -80,8 +69,9 @@ TOOL_GUIDANCE: dict[str, str] = {
         "and simple seasonal patterns."
     ),
     "prediction": (
-        "When using prediction tools, compare new predictions with recent hourly behavior "
-        "and dynamic previous-day model performance. Explain reliability per hour when useful."
+        "For forecast analysis, first use last-30-days hourly behavior, then previous-day "
+        "backtest performance, then the new prediction, then explain reliability per hour "
+        "when useful. Do not compare the new forecast with actual future values."
     ),
     "interval": (
         "When using interval tools, focus on prediction intervals, confidence bands, "
